@@ -6,11 +6,10 @@ var session = require('express-session')
 var router = require('./router')
 var cookieParser = require('cookie-parser')
 var app = express()
-app.all('*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:8081");
+app.all('*', function(req, res, next) {   //http://localhost:8080
+  res.header("Access-Control-Allow-Origin", "http://localhost:8080");
   res.header("Access-Control-Allow-Headers", "content-type");
   res.header('Access-Control-Allow-Credentials', true); 
-
   next();
 })
 app.use(cookieParser())

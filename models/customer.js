@@ -5,42 +5,39 @@ mongoose.connect('mongodb://localhost/test', { useMongoClient: true })
 
 var Schema = mongoose.Schema
 var userSchema = new Schema({
-  zhenduancontent: {
-    type: String,
-    required: true
-  },
   name: {
     type: String,
     required: true
   },
-  status: {
+  birthday: {
     type: String,
-    required: true
-  },
-  yydate: {
-    type: Date,
-    // 注意：这里不要写 Date.now() 因为会即刻调用
-    // 这里直接给了一个方法：Date.now
-    // 当你去 new Model 的时候，如果你没有传递 create_time ，则 mongoose 就会调用 default 指定的Date.now 方法，使用其返回值作为默认值
-    required:true,
-    default:Date.now
-  },
-  yaopinlist: {
-    type: String,
-    required: true
-  },
-  age: {
-    type: String,
-    required: true
-  },
-  todoctorid: {
-    type: String,
-    required: true
+    required: false
   },
   gender: {
     type: String,
-    required: true
+    required: false
+  },
+  password: {
+    type: String,
+    required: false
+  },
+  address: {
+    type: String,
+    required: false
+  },
+  phone: {
+    type: String,
+    required: false
+  },
+  insertDate: {
+    type: Date,
+    required:false,
+    default:Date.now
+  },
+  email:{
+    type: String,
+    required: false
   }
 })
 
-module.exports = mongoose.model('Yuyue', userSchema)
+module.exports = mongoose.model('Customer', userSchema)

@@ -29,7 +29,7 @@ var userSchema = new Schema({
   age:{
     type:String,
     required:true
-  },
+  }
 })
 
 module.exports = mongoose.model('Cusdetail', userSchema)

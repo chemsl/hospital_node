@@ -1,9 +1,14 @@
 var express = require('express')
 var Doctor = require('./models/doctor')
+var Admin = require('./models/admin')
+var yuyue = require('./models/yuyue')
 var Customer = require('./models/customer')
 var Yaopinlist = require('./models/yaopinlist')
 var Cusdetail=require('./models/cusdetail')
+var Historycuer=require('./models/historycuer')
 var md5 = require('blueimp-md5')
+var fs=require('fs')
+
 var router = express.Router()
 
 router.get('/', function (req, res) {
@@ -13,22 +18,24 @@ router.get('/', function (req, res) {
   })
 })
 
-router.get('/login', function (req, res) {
-  res.cookie('username', 'haha');
-  res.cookie("id", 123);
-  res.cookie("usergroup", 'boy');
-  res.cookie("realname", 'heihei');
-  res.send()
+router.get('/aaa', function (req, res) {
+  
+  let a={
+    name:'bob',
+    age:18
+  }
+  res.send(JSON.stringify(a))
+
   //res.render('login.html')
 })
+
+
 
 router.post('/login', function (req, res, next) {
   // 1. 获取表单数据
   // 2. 查询数据库用户名密码是否正确
   // 3. 发送响应数据
   var body = req.body
-  console.log(body.email);
-
   Doctor.findOne({
     email: body.email,
     password: md5(md5(body.password))
@@ -58,7 +65,7 @@ router.post('/login', function (req, res, next) {
     // })
     res.send({
       err_code: 0,
-      message: 'OK'
+      message: 'OKk'
     })
   })
 })
@@ -142,34 +149,61 @@ router.get('/logout', function (req, res) {
 
 //以下是super的路由
 router.post('/getCheck', (req, res, next) => {
-  //1console.log(req.body)
+  //console.log(req.body)
   var body = req.body
-  Doctor.findOne({
-    email: body.email,
-    password: md5(md5(body.password))
-  }, function (err, user) {
-    if (err) {
-      return next(err)
-    }
-    // 如果邮箱和密码匹配，则 user 是查询到的用户对象，否则就是 null
-    if (!user) {
-      return res.status(200).json({
-        err_code: 1,
-        message: 'Email or password is invalid.'
+  if(req.body.type==='doctor'){
+    Doctor.findOne({
+      email: body.email,
+      password: md5(md5(body.password))
+    }, function (err, user) {
+      if (err) {
+        return next(err)
+      }
+      // 如果邮箱和密码匹配，则 user 是查询到的用户对象，否则就是 null
+      if (!user) {
+        return res.status(200).json({
+          err_code: 1,
+          message: 'Email or password is invalid.'
+        })
+      }
+      // 用户存在，登陆成功，通过 Session 记录登陆状态
+      req.session.user = user
+      
+      res.status(200).json({
+        err_code: 0,
+        message: 'ok!',
+        session:user
       })
-    }
-    // 用户存在，登陆成功，通过 Session 记录登陆状态
-    req.session.user = user
-    res.status(200).json({
-      err_code: 0,
-      message: 'ok!'
     })
-  })
+  }
+  else{
+    Admin.findOne({
+      email: body.email,
+      password: md5(md5(body.password))
+    }, function (err, user) {
+      if (err) {
+        return next(err)
+      }
+      // 如果邮箱和密码匹配，则 user 是查询到的用户对象，否则就是 null
+      if (!user) {
+        return res.status(200).json({
+          err_code: 1,
+          message: 'Email or password is invalid.'
+        })
+      }
+      // 用户存在，登陆成功，通过 Session 记录登陆状态
+      req.session.user = user
+      res.status(200).json({
+        err_code: 0,
+        message: 'ok!',
+        session:user
+      })
+    })
+  }
 });
 
-router.get('/getSession', function (req, res, next) {
-  //console.log(req.session.user);
 
+router.get('/getSession', function (req, res, next) {
   res.send(req.session.user)
 
 })
@@ -186,10 +220,9 @@ router.get('/logOut', function (req, res) {
 
 router.post('/checkPwd', (req, res, next) => {
   // console.log(req.session.user)
-  console.log(req.body)
   Doctor.findById(req.session.user._id, function (err) {
     if (err)
-      return res.sres.sendtatus(500).send("server error")
+    return res.status(500).send("server error")
     //console.log(md5(md5(req.body.oldpass)),req.session.user.password);
 
     if (md5(md5(req.body.oldpass)) === req.session.user.password) { //旧密码输入正确，才允许继续
@@ -215,7 +248,7 @@ router.post('/checkPwd', (req, res, next) => {
 });
 
 router.get('/yuyue', function (req, res) {
-  Customer.find(function (err, customer) {
+  yuyue.find(function (err, customer) {
     if (err)
       return res.status(500).send("server err.")
     res.send(JSON.stringify(customer))
@@ -231,8 +264,7 @@ router.get('/yaoPinList', function (req, res) {
 })
 
 router.post('/updateCusStatus', function (req, res) {
-
-  Customer.findByIdAndUpdate(req.body._id, {
+  yuyue.findByIdAndUpdate(req.body._id, {
     status: "治疗中"
   }, function (err) {
     if (err)
@@ -253,10 +285,9 @@ router.post('/postAllDoctor', function (req, res) {
 })
 
 router.post('/getThisCusAllList', function (req, res) {
-  Customer.find({
+  yuyue.find({
     cusId: req.body.cusId
   }, function (err, customer) {
-    console.log(customer);
     
     res.send(JSON.stringify(customer))
   })
@@ -288,12 +319,57 @@ router.post('/saveCusDetail', function (req, res, next) {
 
 })
 router.post('/removeYyCus', function (req, res) {
-  console.log(req.body._id);
-  Customer.findByIdAndRemove(req.body._id,function(err){
-    if(err) 
-      return res.status(500).send("server error")
-    res.send('删除成功')
+  req.body.status='问诊完成'
+  new Historycuer(req.body).save(function(err){
+    yuyue.findByIdAndRemove(req.body._id,function(err){
+      if(err) 
+        return res.status(500).send("server error")
+    })
+    res.send('ookk')
   })
 })
 
+router.post('/getHistoryCuer', function (req, res) {
+  Historycuer.find({
+    todoctorid: req.body.email
+  }, function (err, his) {
+    res.send(JSON.stringify(his))
+  })
+})
+
+router.post('/getAllCuer', function (req, res) { //
+  Customer.find(function (err, customer) {
+    if (err)
+      return res.status(500).send("server err.")
+    res.send(JSON.stringify(customer))
+  })
+})
+
+router.post('/updateCusInformation', function (req, res) { //管理员修改customer信息(客户管理)
+  console.log(req.body);
+  Customer.findByIdAndUpdate(req.body._id, {
+    name:req.body.name,
+    birthday:req.body.birthday,
+    gender:req.body.gender,
+    address:req.body.address,
+    email:req.body.email,
+    phone:req.body.phone,
+    insertDate:req.body.insertDate
+  }, function (err) {
+    if (err)
+      return res.status(500).send("server error")
+    res.status(200).json({
+      err_code: 0,
+      message: 'ok!111000'
+    })
+  })
+})
+
+
+
+router.post('/getCity', function (req, res) { //管理员页面客户管理患者地址的级联选择器
+    var options=require('./public/js/s.js')
+    console.log(options);
+    res.send(options)
+})
 module.exports = router 
