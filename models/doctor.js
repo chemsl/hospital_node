@@ -40,3 +40,12 @@ var userSchema = new Schema({
 })
 
 module.exports = mongoose.model('Doctor', userSchema)
+
+let doc={
+  doctorid:'1',
+  name:'李医生',
+  gender:'男',
+  可预约时间:[
+    
+  ]
+}

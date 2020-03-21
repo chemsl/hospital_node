@@ -4,11 +4,13 @@ var bodyParser = require('body-parser')
 
 var session = require('express-session')
 var router = require('./router')
+var router_xcx = require('./router_xcx')
 var cookieParser = require('cookie-parser')
 var app = express()
-app.all('*', function(req, res, next) {   //http://localhost:8080
+app.all('*', function(req, res, next) {   
   res.header("Access-Control-Allow-Origin", "http://localhost:8080");
-  res.header("Access-Control-Allow-Headers", "content-type");
+  //res.header("Access-Control-Allow-Headers", "content-type");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type")
   res.header('Access-Control-Allow-Credentials', true); 
   next();
 })
@@ -52,7 +54,7 @@ app.use(bodyParser.json())
 
 // 把路由挂载到 app 中
 app.use(router)
-
+app.use(router_xcx)
 // 配置一个处理 404 的中间件
 app.use(function (req, res) {
   res.render('404.html')

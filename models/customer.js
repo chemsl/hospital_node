@@ -7,7 +7,7 @@ var Schema = mongoose.Schema
 var userSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: false
   },
   birthday: {
     type: String,
@@ -17,9 +17,13 @@ var userSchema = new Schema({
     type: String,
     required: false
   },
-  password: {
+  idcard: {
     type: String,
     required: false
+  },
+  password: {
+    type: String,
+    required: true
   },
   address: {
     type: String,
@@ -27,7 +31,7 @@ var userSchema = new Schema({
   },
   phone: {
     type: String,
-    required: false
+    required: true
   },
   insertDate: {
     type: Date,
@@ -38,6 +42,7 @@ var userSchema = new Schema({
     type: String,
     required: false
   }
+
 })
 
 module.exports = mongoose.model('Customer', userSchema)

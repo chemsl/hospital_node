@@ -7,7 +7,6 @@ var Yaopinlist = require('./models/yaopinlist')
 var Cusdetail=require('./models/cusdetail')
 var Historycuer=require('./models/historycuer')
 var md5 = require('blueimp-md5')
-var fs=require('fs')
 
 var router = express.Router()
 
@@ -71,9 +70,7 @@ router.post('/login', function (req, res, next) {
 })
 
 
-router.get('/register', function (req, res, next) {
-  res.render('register.html')
-})
+
 
 router.post('/register', function (req, res, next) {
   // 1. 获取表单提交的数据
@@ -168,6 +165,7 @@ router.post('/getCheck', (req, res, next) => {
       }
       // 用户存在，登陆成功，通过 Session 记录登陆状态
       req.session.user = user
+      console.log(req.session.user,168);
       
       res.status(200).json({
         err_code: 0,
@@ -203,16 +201,17 @@ router.post('/getCheck', (req, res, next) => {
 });
 
 
-router.get('/getSession', function (req, res, next) {
+router.post('/getSession', function (req, res, next) {
+  console.log(req.session,22222);
   res.send(req.session.user)
-
 })
+
 router.get('/logOut', function (req, res) {
   console.log('logout');
 
   req.session.user = null;
-  res.status(200).json({
-    err_code: 0,
+  res.status(200).json({ 
+    err_code: 0, 
     message: '登出成功'
   })
 })
@@ -331,7 +330,7 @@ router.post('/removeYyCus', function (req, res) {
 
 router.post('/getHistoryCuer', function (req, res) {
   Historycuer.find({
-    todoctorid: req.body.email
+    doctorid: req.body.email
   }, function (err, his) {
     res.send(JSON.stringify(his))
   })
@@ -366,10 +365,115 @@ router.post('/updateCusInformation', function (req, res) { //管理员修改cust
 })
 
 
-
 router.post('/getCity', function (req, res) { //管理员页面客户管理患者地址的级联选择器
-    var options=require('./public/js/s.js')
+    var options=require('./public/js/city.js')
     console.log(options);
     res.send(options)
 })
-module.exports = router 
+
+
+
+router.get('/test', function (req, res) { //管理员页面客户管理患者地址的级联选择器
+
+  new Cusdetail(req.body).save(function(err,data){
+    res.send('保存成功')
+  })
+})
+
+
+var Xcxindexpageinfors =require('./models/xcxindexpageinfors')
+var Keshi = require('./models/keshi')
+router.get('/toAddData', function (req, res, next) {
+  let obj=
+    {
+      id:0,
+      name: '康复科',
+      time:[//该科室每个日期中,医生的排班数据
+        {
+          name:'3-25日',
+          date:'03-25',
+          doctor:[
+            { doctorid:'2',
+              name: '张医生',
+              grade:'主治医师' ,
+              number:[
+              {num:1,state:'可预约',date:'8:05-9:00'},
+              {num:2,state:'可预约',date:'9:00-10:00'},
+              {num:3,state:'可预约',date:'10:00-11:00'},
+              ]
+            },
+            { doctorid:'3',
+              name: '林医生',
+              grade:'主治医师' ,
+              number:[
+              {num:1,state:'可预约',date:'8:11-9:00'},
+              {num:2,state:'可预约',date:'9:00-10:00'},
+              {num:3,state:'可预约',date:'10:00-11:00'},
+              ]
+            },
+            { doctorid:'4',
+              name: '齐医生',
+              grade:'主治医师' ,
+              number:[
+              {num:1,state:'可预约',date:'8:20-9:00'},
+              {num:2,state:'可预约',date:'9:00-10:00'},
+              {num:3,state:'可预约',date:'10:00-11:00'},
+              ]
+            },
+          ],
+        },
+        {
+          name:'3-26日',
+          date:'03-26',
+          doctor:[
+            { doctorid:'3',
+              name: '林医生',
+              grade:'主治医师' ,
+              number:[
+              {num:1,state:'可预约',date:'8:00-9:00'},
+              {num:2,state:'可预约',date:'9:00-10:00'},
+              {num:3,state:'可预约',date:'10:00-11:00'},
+              ]
+            },
+            { doctorid:'4',
+              name: '钱医生',
+              grade:'主治医师' ,
+              number:[
+              {num:1,state:'可预约',date:'8:10-9:00'},
+              {num:2,state:'可预约',date:'9:00-10:00'},
+              {num:3,state:'可预约',date:'10:00-11:00'},
+              ]
+            },
+            { doctorid:'5',
+              name: '孙医生',
+              grade:'主治医师' ,
+              number:[
+              {num:1,state:'可预约',date:'8:20-9:00'},
+              {num:2,state:'可预约',date:'9:00-10:00'},
+              {num:3,state:'可预约',date:'10:00-11:00'},
+              ]
+            },
+          ],
+        },
+      ]
+    }
+  new Keshi(obj).save(function(err,data){
+    res.send('保存成功1')
+  })
+})
+
+router.post('/abc', function (req, res) {
+  Keshi.find(function (err, data) {
+    if (err)
+      return res.status(500).send("server err.")
+      //console.log(data,446)
+    res.send(data)
+  })
+})
+
+
+module.exports = router  
+
+
+
+

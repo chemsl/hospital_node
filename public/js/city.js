@@ -4628,19 +4628,6 @@ const options = [
       }, {"value": "路凼填海区", "label": "路凼填海区"}, {"value": "圣方济各堂区", "label": "圣方济各堂区"}]
     }]
   }]
-}, {
-  "value": "Australia",
-  "label": "Australia",
-  "children": [
-    {"value": "ACT", "label": "ACT"}, //首都地区
-    {"value": "NT", "label": "NT"}, //北部地区
-    { "value": "TAS","label": "TAS"}, //塔斯马尼亚州
-    {"value": "SA", "label": "SA"}, //南澳大利亚州
-    {"value": "WA", "label": "WA"},//西澳大利亚州
-    {"value": "VIC","label": "VIC"}, //维多利亚州
-    {"value": "QLD", "label": "QLD"},//昆士兰州
-    {"value": "NSW", "label": "NSW"}//新南威尔士州
-    ]
 }]
 
 module.exports= options
