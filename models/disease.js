@@ -5,21 +5,16 @@ mongoose.connect('mongodb://localhost/test', { useMongoClient: true })
 
 var Schema = mongoose.Schema
 var userSchema = new Schema({
-  email: {
-    type: String,
-    required: false
-  },
-  doctorid: {
+  id: {
     type: String,
     required: true
   },
-
-  nickname: {
+  label: {
     type: String,
     required: true
   },
-  password: {
-    type: String,
+  children: {
+    type: Array,
     required: true
   },
   created_time: {
@@ -29,27 +24,7 @@ var userSchema = new Schema({
     // 当你去 new Model 的时候，如果你没有传递 create_time ，则 mongoose 就会调用 default 指定的Date.now 方法，使用其返回值作为默认值
     default: Date.now
   },
-  
-  avatar: {
-    type: String,
-    default: '/public/img/avatar-default.png'
-  },
- 
-  gender: {
-    type: Number,
-    enum: [-1, 0, 1],
-    default: -1
-  },
-  
+
 })
 
-module.exports = mongoose.model('Doctor', userSchema)
-
-let doc={
-  doctorid:'1',
-  name:'李医生',
-  gender:'男',
-  可预约时间:[
-    
-  ]
-}
+module.exports = mongoose.model('Disease', userSchema)

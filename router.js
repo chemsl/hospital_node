@@ -12,20 +12,17 @@ var router = express.Router()
 
 router.get('/', function (req, res) {
   // console.log(req.session.user)
-  res.render('index.html', {
-    user: req.session.user
+  res.render('login.html', {
   })
 })
 
 router.get('/aaa', function (req, res) {
-  
-  let a={
+  let object={
     name:'bob',
     age:18
   }
-  res.send(JSON.stringify(a))
+  res.send(object)
 
-  //res.render('login.html')
 })
 
 
@@ -146,11 +143,11 @@ router.get('/logout', function (req, res) {
 
 //以下是super的路由
 router.post('/getCheck', (req, res, next) => {
-  //console.log(req.body)
+  console.log(req.body)
   var body = req.body
   if(req.body.type==='doctor'){
     Doctor.findOne({
-      email: body.email,
+      doctorid: body.doctorid,
       password: md5(md5(body.password))
     }, function (err, user) {
       if (err) {
@@ -176,7 +173,7 @@ router.post('/getCheck', (req, res, next) => {
   }
   else{
     Admin.findOne({
-      email: body.email,
+      doctorid: body.doctorid,
       password: md5(md5(body.password))
     }, function (err, user) {
       if (err) {
@@ -319,6 +316,7 @@ router.post('/saveCusDetail', function (req, res, next) {
 })
 router.post('/removeYyCus', function (req, res) {
   req.body.status='问诊完成'
+  console.log(req.body)
   new Historycuer(req.body).save(function(err){
     yuyue.findByIdAndRemove(req.body._id,function(err){
       if(err) 
@@ -330,7 +328,7 @@ router.post('/removeYyCus', function (req, res) {
 
 router.post('/getHistoryCuer', function (req, res) {
   Historycuer.find({
-    doctorid: req.body.email
+    doctorid: req.body.doctorid
   }, function (err, his) {
     res.send(JSON.stringify(his))
   })
@@ -367,7 +365,6 @@ router.post('/updateCusInformation', function (req, res) { //管理员修改cust
 
 router.post('/getCity', function (req, res) { //管理员页面客户管理患者地址的级联选择器
     var options=require('./public/js/city.js')
-    console.log(options);
     res.send(options)
 })
 
@@ -383,82 +380,24 @@ router.get('/test', function (req, res) { //管理员页面客户管理患者地
 
 var Xcxindexpageinfors =require('./models/xcxindexpageinfors')
 var Keshi = require('./models/keshi')
+var Disease= require('./models/disease')
+var DiseaseInfo= require('./models/diseaseInfo')
 router.get('/toAddData', function (req, res, next) {
-  let obj=
-    {
-      id:0,
-      name: '康复科',
-      time:[//该科室每个日期中,医生的排班数据
-        {
-          name:'3-25日',
-          date:'03-25',
-          doctor:[
-            { doctorid:'2',
-              name: '张医生',
-              grade:'主治医师' ,
-              number:[
-              {num:1,state:'可预约',date:'8:05-9:00'},
-              {num:2,state:'可预约',date:'9:00-10:00'},
-              {num:3,state:'可预约',date:'10:00-11:00'},
-              ]
-            },
-            { doctorid:'3',
-              name: '林医生',
-              grade:'主治医师' ,
-              number:[
-              {num:1,state:'可预约',date:'8:11-9:00'},
-              {num:2,state:'可预约',date:'9:00-10:00'},
-              {num:3,state:'可预约',date:'10:00-11:00'},
-              ]
-            },
-            { doctorid:'4',
-              name: '齐医生',
-              grade:'主治医师' ,
-              number:[
-              {num:1,state:'可预约',date:'8:20-9:00'},
-              {num:2,state:'可预约',date:'9:00-10:00'},
-              {num:3,state:'可预约',date:'10:00-11:00'},
-              ]
-            },
-          ],
-        },
-        {
-          name:'3-26日',
-          date:'03-26',
-          doctor:[
-            { doctorid:'3',
-              name: '林医生',
-              grade:'主治医师' ,
-              number:[
-              {num:1,state:'可预约',date:'8:00-9:00'},
-              {num:2,state:'可预约',date:'9:00-10:00'},
-              {num:3,state:'可预约',date:'10:00-11:00'},
-              ]
-            },
-            { doctorid:'4',
-              name: '钱医生',
-              grade:'主治医师' ,
-              number:[
-              {num:1,state:'可预约',date:'8:10-9:00'},
-              {num:2,state:'可预约',date:'9:00-10:00'},
-              {num:3,state:'可预约',date:'10:00-11:00'},
-              ]
-            },
-            { doctorid:'5',
-              name: '孙医生',
-              grade:'主治医师' ,
-              number:[
-              {num:1,state:'可预约',date:'8:20-9:00'},
-              {num:2,state:'可预约',date:'9:00-10:00'},
-              {num:3,state:'可预约',date:'10:00-11:00'},
-              ]
-            },
-          ],
-        },
-      ]
-    }
-  new Keshi(obj).save(function(err,data){
-    res.send('保存成功1')
+  let obj={
+    id:'yanjing4',
+    name:'干燥综合征',
+    ovewview:'干燥综合征是一种全身外分泌腺的慢性炎症性的自身免疫病, 主要侵犯泪腺和大小唾液腺等，导致腺体破坏和分泌减少或缺乏，临床表现以眼和口腔粘膜为主的干燥症状，呼吸道、消化道、泌尿道、神经、肌肉、关节等均可受损。分为原发性和继发性两种，前者指有干燥性角结膜炎和口腔干燥而不伴有其他结缔组织病;而后者则指伴发其他结缔组织病。',
+    keshi:'眼科',
+    cause:'（一）感染 （二）过敏体质 （三）遗传因素',
+    description:'起病多数呈隐袭和慢性进展，少数急和进展快。本病系累及多系统的疾病。 （一）口腔 轻度病变常被病人忽视，较重时唾液少，食物刺激和咀嚼不能相应增加唾液分泌，舌红、干裂或溃疡，活动不便，舌系带底部无唾液积聚，咀嚼和吞咽困难。龋齿和齿龈炎常见，牙齿呈粉末状或小块破碎掉落，唇和口角干燥皲裂，有口臭。约半数病人反复发生腮腺肿大，重度时形成松鼠样脸，颔下腺亦可肿大。 （二）眼呈干燥性角结膜炎，眼觉干燥、痒痛，可有异物或烧灼感，视力模糊，似有幕状物，畏光，角膜可混浊，有糜烂或溃疡，小血管增生，严重时可穿孔。可合并虹膜脉络膜炎;结膜发炎，球结膜血管扩张；泪液少，少数泪腺肿大，易并发细菌、真菌和病毒感染。偶见有突眼为首发症状的。 （三）呼吸道：鼻粘膜腺体受侵犯引起鼻腔干燥，鼻痂形成，常有鼻衄和鼻中膈炎，欧氏管堵塞可发生浆液性中耳炎，传导性耳聋；咽喉干燥，有声音嘶哑，痰液稠粘，并发气管炎、支气管炎、胸膜炎、间质性肺炎和肺不张，临床无明显肺部病变的患者可有限制性换气障碍和气体弥漫功能下降。 （四）消化道：咽部和食管干燥可使吞咽困难，胃粘膜因腺淋巴细胞浸润增大，胃粘膜皱襞粗大，胃酸分泌减少小肠吸收功能可受损，对胃泌素和促胰酶素的反应有障碍。 （五）泌尿道：肾病变占1/3，常见为间质性肾炎，有肾小管功能缺陷，呈肾小管性酸中毒、肾性糖尿、氨基酸尿，和尿酸再吸收减少等，亦有并发肾小球肾炎，系IgM和补体在肾小球沉积。 （六）神经系统：各水平的神经组织可受损，中枢神经累及为25%、周围神经为10%～43%。前者从脑膜到脑实质和各个部位的脊髓都可受累，周围神经的部位广泛，包括神经根、轴索、髓鞘、感觉和运动支均可累及；临床表现多样，包括精神障碍、抽搐、偏盲、失语、偏瘫、截瘫，共济失调等。 （七）肌肉：累及占2%左右，表现为肌痛，肌无力，由间质性肌炎造成，间质小血管周围有淋巴细胞和单核细胞浸润，也可出现绿发于肾小管酸中毒、低血钾造成的周期性麻痹。 （八）关节：约10%病例累及关节，呈现肿痛，常为非侵犯性关节为。 （九）皮肤粘膜：干燥如鱼鳞病样，有结节性红斑、紫癜，雷诺现象和皮肤溃疡;阴道粘膜亦可干燥和萎缩。 （十）淋巴结：局部或全身淋巴结可肿大。',
+    find:'1.血液学检查：轻度正细胞正色素性贫血，白细胞减少，血沉增快。特异性抗体抗SS-A抗体和抗SS-B抗体，阳性率分别达70%～75%和48%～60%。90%以上胡总奈何有高丙球蛋白血症。 2.泪腺和唾液腺功能测定：可定量测定干燥性角结膜炎和口干燥症的程度。',
+    diagnosis:'1.干燥性角结膜炎；2.口干燥症；3.血清中有下列一种抗体阳性者：抗SS-A、抗SS-B，ANA>1：20、RF>1：20。具有上述3条，并除外其他结缔组织病和淋巴瘤、AIDS和GVH等疾病者可以确诊；只有上述二条并除外其他疾病者为可能病例。 本病需与系统性红斑狼疮、类风湿关节炎、血小板减少性紫癜、淋巴瘤、感染性疾病相鉴别。',
+    prevention:'由于病因不清，目前尚无有效的预防措施',
+    complication:'本病可累及全身，最多见于肺部。肺内病变严重者可出现肺大疱，气胸和支气管扩张，可发展成纤维化，引起肺功能不全和心力衰竭。眼部病变可造成严重的视力障碍。可并发尿崩症，出现Addison综合征，偶见蛋白尿、脓尿、血尿，高钙血症，肾功能衰竭等。',
+    treatment:'无特殊治疗。注意口眼的卫D生，以0.5%甲基纤维素滴眼；时常以枸橼酸溶液漱口以刺激唾液腺分泌功能及代替部分唾液，以2%甲基纤维素餐前涂抹口腔偶可改善症状。在发生严重的功能改变及广泛的系统累及以及伴同其他结缔组织病时，可采用皮质类固醇、免疫抑制剂或雷公芚制剂，血浆置换治疗。'
+  }
+  new Disease(obj2).save(function(err,data){
+    res.send('保存成功')
   })
 })
 
