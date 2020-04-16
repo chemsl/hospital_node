@@ -51,7 +51,7 @@ var userSchema = new Schema({
   },
   content: {
     type: String,
-    required: true
+    required: false
   },
   medicine: {
     type: Array,

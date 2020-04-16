@@ -5,30 +5,22 @@ mongoose.connect('mongodb://localhost/test', { useMongoClient: true })
 
 var Schema = mongoose.Schema
 var userSchema = new Schema({
-  id:{
-    type:String||Number,
-    required:false
-  },
-  title:{
-    type:String,
-    required:true
-  },
   picture:{
     type:String,
     required:false
   },
-  date:{
-    type:String||Date,
-    required:false
-  },
-  author:{
+  title:{
     type:String,
     required:false
   },
-  text:{
+  description:{
     type:String,
-    required:true
+    required:false
   },
+  path:{
+    type:String,
+    required:false
+  }
 })
 
-module.exports = mongoose.model('New', userSchema)
+module.exports = mongoose.model('Lunbotu', userSchema)

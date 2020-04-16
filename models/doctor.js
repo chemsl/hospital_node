@@ -5,16 +5,23 @@ mongoose.connect('mongodb://localhost/test', { useMongoClient: true })
 
 var Schema = mongoose.Schema
 var userSchema = new Schema({
-  email: {
+  doctorid: {
+    type: String||Number,
+    required: true
+  },
+  phone: {
     type: String,
     required: false
   },
-  doctorid: {
+  nickname: {
     type: String,
     required: true
   },
-
-  nickname: {
+  department: {
+    type: String,
+    required: true
+  },
+  grade: {
     type: String,
     required: true
   },
@@ -32,24 +39,16 @@ var userSchema = new Schema({
   
   avatar: {
     type: String,
-    default: '/public/img/avatar-default.png'
+    default: '/public/img/avatar-default.png',
+    required:false
   },
+  
  
   gender: {
-    type: Number,
-    enum: [-1, 0, 1],
-    default: -1
+    type: String,
+    required:false
   },
   
 })
 
 module.exports = mongoose.model('Doctor', userSchema)
-
-let doc={
-  doctorid:'1',
-  name:'李医生',
-  gender:'男',
-  可预约时间:[
-    
-  ]
-}

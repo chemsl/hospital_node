@@ -7,7 +7,7 @@ var Yuyue = require('./models/yuyue')
 var Keshi = require('./models/keshi')
 var Advisory = require('./models/advisory')
 var Disease= require('./models/disease')
-
+var news= require('./models/new')
 router_xcx.post('/getAllDepartment', function (req, res) {
   Department.find(function (err, data) {
     if (err)
@@ -325,7 +325,7 @@ router_xcx.post('/getDisease', function (req, res) {
   })
 })
 
-var news= require('./models/new')
+
 router_xcx.get('/at', function (req, res, next) {
   let obj={
     id:1,
