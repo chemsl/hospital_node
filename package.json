@@ -23,7 +23,7 @@
     "express-session": "^1.15.6",
     "iconv-lite": "^0.5.1",
     "jquery": "^3.2.1",
-    "mongoose": "^4.13.0",
+    "mongoose": "^5.7.5",
     "request": "^2.88.2"
   }
 }
