@@ -7,10 +7,34 @@ var Yaopinlist = require('./models/yaopinlist')
 var Cusdetail = require('./models/cusdetail')
 var Historycuer = require('./models/historycuer')
 var Lunbotu = require('./models/lunbotu')
-var news= require('./models/new')
+var news = require('./models/new')
 var md5 = require('blueimp-md5')
-
+var fs = require('fs')
 var router = express.Router()
+
+router.post('/addjson', function (req, res) {
+  let body=JSON.stringify(req.body)
+  fs.writeFile('./hw.json', body, function (error) {
+    if (error) {
+      res.send('err')
+    } else {
+      res.send('ok')
+    }
+  })
+})
+
+router.post('/getjson', function (req, res) {
+  let body=JSON.stringify(req.body)
+  fs.readFile('./hw.json',function(error,data){
+    // 判断
+    if(error){
+      res.send('err')
+    }else{
+      // 转字符
+      res.send(data)
+    }
+  })
+})
 
 router.get('/', function (req, res) {
   // console.log(req.session.user)
@@ -421,7 +445,7 @@ router.post('/getlbt', function (req, res) {
 
 router.post('/updatelbt', function (req, res, next) {
   console.log(req.body._id);
-  
+
   Lunbotu.findByIdAndUpdate(req.body._id, {
     picture: req.body.picture,
     title: req.body.title,
@@ -434,7 +458,7 @@ router.post('/updatelbt', function (req, res, next) {
   })
 })
 router.post('/addNews', function (req, res, next) {
-  new news(req.body).save(function(err,data){
+  new news(req.body).save(function (err, data) {
     res.send('保存成功')
   })
 })
@@ -446,28 +470,28 @@ router.post('/getNewsPC', function (req, res) {
   })
 })
 router.post('/updateNewsPC', function (req, res) {
-  news.findByIdAndUpdate(req.body._id,{
-    author:req.body.author,
-    date:req.body.date,
-    title:req.body.title,
-  },err=>{
+  news.findByIdAndUpdate(req.body._id, {
+    author: req.body.author,
+    date: req.body.date,
+    title: req.body.title,
+  }, err => {
     if (err)
       return res.status(500).send("server error")
     res.send('修改成功')
   })
 })
 router.post('/deleteNewsPC', function (req, res) {
-  news.findByIdAndRemove(req.body._id,err=>{
-    if(err)
-    return res.status(500).send("server err.")
+  news.findByIdAndRemove(req.body._id, err => {
+    if (err)
+      return res.status(500).send("server err.")
     res.send('删除成功')
   })
 })
 
 router.post('/deleteDoctor', function (req, res) {
-  Doctor.findByIdAndRemove(req.body._id,err=>{
-    if(err)
-    return res.status(500).send("server err.")
+  Doctor.findByIdAndRemove(req.body._id, err => {
+    if (err)
+      return res.status(500).send("server err.")
     res.send('删除成功')
   })
 })
@@ -478,18 +502,30 @@ router.post('/deleteDoctor', function (req, res) {
 //   let arr=req.body.arr
 //   for(let i of arr){
 //     new test(i).save(function(err,data){
-      
+
 //     })
 //   }
 //   res.send('保存成功')
 // })
 
-  router.post('/AddDoctor', function (req, res) {
-    req.body.password=md5(md5(req.body.password))
-    console.log(req.body);
-    
-    new Doctor(req.body).save(function(err,data){
-      res.send('保存成功')
-    })
+router.post('/AddDoctor', function (req, res) {
+  req.body.password = md5(md5(req.body.password))
+  console.log(req.body);
+
+  new Doctor(req.body).save(function (err, data) {
+    res.send('保存成功')
   })
+})
+var fs = require('fs')
+router.get('/getQues', function (req, res) {
+  fs.readFile('./test.json', function (err, data) {
+    res.send(data)
+  })
+})
+
+
+
+
+
+
 module.exports = router
